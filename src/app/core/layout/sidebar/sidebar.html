@@ -1,0 +1,97 @@
+<aside class="sidebar" [class.collapsed]="isCollapsed()">
+  <div class="sidebar-header">
+    @if (!isCollapsed()) {
+      <div class="titles">
+        <h2>{{ migrationService.dataset().title }}</h2>
+        <span class="subtitle">Movebank Telemetry Repository</span>
+      </div>
+    }
+    <button
+      class="collapse-toggle"
+      (click)="toggleSidebar()"
+      [title]="isCollapsed() ? 'Expand' : 'Collapse'"
+    >
+      @if (isCollapsed()) {
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      } @else {
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      }
+    </button>
+  </div>
+
+  @if (!isCollapsed()) {
+    <div class="sidebar-body">
+      <div class="section-desc">
+        <p>{{ migrationService.dataset().description }}</p>
+      </div>
+
+      <div class="section-title">
+        <span>TRACKED INDIVIDUALS</span>
+        <span class="badge">{{ migrationService.dataset().tracks.length }}</span>
+      </div>
+
+      <div class="individuals-list">
+        @for (track of migrationService.dataset().tracks; track track.individualId) {
+          @let isSelected = migrationService.selectedIndividualIds().has(track.individualId);
+          <div
+            class="individual-card"
+            [class.selected]="isSelected"
+            (click)="migrationService.toggleIndividualSelection(track.individualId)"
+          >
+            <div class="color-indicator" [style.background-color]="track.color"></div>
+            <div class="meta">
+              <span class="common-name">{{ track.commonName }}</span>
+              <span class="scientific-name">{{ track.speciesName }}</span>
+              <span class="id-tag">ID: {{ track.individualId }}</span>
+            </div>
+            <div class="checkbox-visual">
+              @if (isSelected) {
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#38bdf8"
+                  stroke-width="3"
+                >
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="metadata-footer">
+        <div class="meta-row">
+          <span>Total Records:</span>
+          <strong>{{
+            migrationService.dataset().tracks.reduce((acc, t) => acc + t.points.length, 0)
+          }}</strong>
+        </div>
+        <div class="meta-row">
+          <span>Sensor Protocol:</span>
+          <strong>GPS / Satellite</strong>
+        </div>
+      </div>
+    </div>
+  }
+</aside>
