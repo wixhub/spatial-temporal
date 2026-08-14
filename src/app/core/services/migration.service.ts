@@ -75,7 +75,7 @@ export class MigrationService {
 
   // --- DATA REPOSITORY LOADER ---
   private loadDataset(): void {
-    this.http.get<MigrationDataset>('assets/data.json').subscribe({
+    this.http.get<MigrationDataset>('data/data.json').subscribe({
       next: (data) => {
         this._dataset.set(data);
         const allIds = new Set(data.tracks.map((t) => t.individualId));

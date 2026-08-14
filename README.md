@@ -4,6 +4,10 @@
 
 A high-performance scientific web application built with Angular 22 (with Signals), TypeScript, Leaflet.js, and SCSS for interactive playback and visualization of animal migration telemetry over geographical map layers.
 
+## 🚀 Live Demo
+
+🔗 **[View Live Application on Cloudflare Pages](https://spatial-temporal.pages.dev)**
+
 ## 🚀 Key Features
 
 - Interactive Map Integration (Leaflet.js): Responsive map viewport rendering historical migration paths (polylines) and real-time interpolated animal position markers based on geographic coordinates (latitude, longitude, timestamp).
@@ -57,7 +61,7 @@ src/
 
 Prerequisites:
 
-- Node.js (v18+ recommended)
+- Node.js (v24.15.0 recommended)
 - npm or yarn
 
 ## Installation
