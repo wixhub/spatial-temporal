@@ -1,0 +1,76 @@
+<div class="timeline-container">
+  <!-- Top Row Controls & Timestamp Display -->
+  <div class="timeline-controls-row">
+    <div class="action-group">
+      <button
+        class="play-btn"
+        (click)="migrationService.togglePlay()"
+        [title]="migrationService.isPlaying() ? 'Pause Playback' : 'Start Playback'"
+      >
+        @if (migrationService.isPlaying()) {
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <rect x="6" y="4" width="4" height="16"></rect>
+            <rect x="14" y="4" width="4" height="16"></rect>
+          </svg>
+        } @else {
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        }
+      </button>
+
+      <div class="time-display">
+        <span class="label">TELEMETRY TIME:</span>
+        <span class="value">{{ formatDate(migrationService.currentTime()) }}</span>
+      </div>
+    </div>
+
+    <!-- Speed Multiplier Scaler Chips -->
+    <div class="speed-selector">
+      <span class="label">SPEED:</span>
+      <div class="speed-chips">
+        @for (s of speeds; track s) {
+          <button
+            [class.active]="migrationService.playbackSpeed() === s"
+            (click)="migrationService.setSpeed(s)"
+          >
+            {{ s }}x
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Scrubbing Slider Track -->
+  <div class="slider-row">
+    <span class="bound-time">{{ formatDate(migrationService.startTime()) }}</span>
+
+    <div class="range-slider-wrapper">
+      <input
+        type="range"
+        [min]="migrationService.startTime()"
+        [max]="migrationService.endTime()"
+        [value]="migrationService.currentTime()"
+        (input)="onSeekInput($event)"
+        class="scrub-range"
+      />
+      <div class="range-progress-fill" [style.width.%]="calculateProgress()"></div>
+    </div>
+
+    <span class="bound-time">{{ formatDate(migrationService.endTime()) }}</span>
+  </div>
+</div>
