@@ -1,0 +1,137 @@
+{
+  "datasetId": "movebank-telemetry-eur-2026",
+  "title": "European Alpine & Trans-Med Raptor Tracking",
+  "description": "High-resolution GPS telemetry recorded across Central Europe via Movebank repository protocols.",
+  "startTime": 1770336000000,
+  "endTime": 1770768000000,
+  "tracks": [
+    {
+      "individualId": "OOSP-2026-01A",
+      "speciesName": "Aquila chrysaetos",
+      "commonName": "Golden Eagle Alpha",
+      "tagDeployDate": "2025-08-15",
+      "color": "#FF5733",
+      "points": [
+        {
+          "id": "OOSP-2026-01A-0",
+          "individualId": "OOSP-2026-01A",
+          "timestamp": 1770336000000,
+          "latitude": 47.6062,
+          "longitude": 9.3691,
+          "altitude": 1200,
+          "groundSpeed": 14.5,
+          "temperature": 15.0,
+          "sensorType": "GPS"
+        },
+        {
+          "id": "OOSP-2026-01A-1",
+          "individualId": "OOSP-2026-01A",
+          "timestamp": 1770343200000,
+          "latitude": 48.1,
+          "longitude": 10.2,
+          "altitude": 1450,
+          "groundSpeed": 16.2,
+          "temperature": 13.5,
+          "sensorType": "GPS"
+        },
+        {
+          "id": "OOSP-2026-01A-2",
+          "individualId": "OOSP-2026-01A",
+          "timestamp": 1770350400000,
+          "latitude": 48.6,
+          "longitude": 11.1,
+          "altitude": 1300,
+          "groundSpeed": 12.8,
+          "temperature": 12.0,
+          "sensorType": "GPS"
+        },
+        {
+          "id": "OOSP-2026-01A-3",
+          "individualId": "OOSP-2026-01A",
+          "timestamp": 1770357600000,
+          "latitude": 49.1,
+          "longitude": 12.3,
+          "altitude": 1600,
+          "groundSpeed": 18.0,
+          "temperature": 10.5,
+          "sensorType": "GPS"
+        },
+        {
+          "id": "OOSP-2026-01A-4",
+          "individualId": "OOSP-2026-01A",
+          "timestamp": 1770364800000,
+          "latitude": 50.0874,
+          "longitude": 14.4208,
+          "altitude": 1150,
+          "groundSpeed": 10.1,
+          "temperature": 11.2,
+          "sensorType": "GPS"
+        }
+      ]
+    },
+    {
+      "individualId": "CIGR-2026-09X",
+      "speciesName": "Ciconia ciconia",
+      "commonName": "White Stork Flock Leader",
+      "tagDeployDate": "2025-09-01",
+      "color": "#3357FF",
+      "points": [
+        {
+          "id": "CIGR-2026-09X-0",
+          "individualId": "CIGR-2026-09X",
+          "timestamp": 1770336000000,
+          "latitude": 48.5734,
+          "longitude": 7.7521,
+          "altitude": 900,
+          "groundSpeed": 11.2,
+          "temperature": 16.4,
+          "sensorType": "GPS"
+        },
+        {
+          "id": "CIGR-2026-09X-1",
+          "individualId": "CIGR-2026-09X",
+          "timestamp": 1770343200000,
+          "latitude": 46.8,
+          "longitude": 5.4,
+          "altitude": 1050,
+          "groundSpeed": 13.5,
+          "temperature": 15.1,
+          "sensorType": "GPS"
+        },
+        {
+          "id": "CIGR-2026-09X-2",
+          "individualId": "CIGR-2026-09X",
+          "timestamp": 1770350400000,
+          "latitude": 44.5,
+          "longitude": 2.1,
+          "altitude": 850,
+          "groundSpeed": 9.8,
+          "temperature": 18.0,
+          "sensorType": "GPS"
+        },
+        {
+          "id": "CIGR-2026-09X-3",
+          "individualId": "CIGR-2026-09X",
+          "timestamp": 1770357600000,
+          "latitude": 42.2,
+          "longitude": -1.5,
+          "altitude": 700,
+          "groundSpeed": 12.1,
+          "temperature": 21.3,
+          "sensorType": "GPS"
+        },
+        {
+          "id": "CIGR-2026-09X-4",
+          "individualId": "CIGR-2026-09X",
+          "timestamp": 1770364800000,
+          "latitude": 40.4168,
+          "longitude": -3.7038,
+          "altitude": 650,
+          "groundSpeed": 8.4,
+          "temperature": 22.5,
+          "sensorType": "GPS"
+        }
+      ]
+    }
+  ]
+}
