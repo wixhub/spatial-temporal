@@ -1,22 +1,24 @@
-import { Injectable, signal, computed, effect, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Service, signal, computed, effect, inject } from '@angular/core';
+import { httpResource } from '@angular/common/http';
 import { MigrationDataset, PlaybackSpeed } from '../models/telemetry.model';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class MigrationService {
-  private http = inject(HttpClient);
-
   // --- STATE SIGNALS ---
-  private readonly _dataset = signal<MigrationDataset>({
-    datasetId: 'loading',
-    title: 'Loading Repository...',
-    description: 'Fetching telemetry payloads from assets...',
-    startTime: Date.now(),
-    endTime: Date.now() + 1000,
-    tracks: [],
-  });
+  // Using stable httpResource for declarative and signal-based data loading
+  private readonly datasetResource = httpResource<MigrationDataset>(
+    () => 'data/telemetry-mock.json',
+    {
+      defaultValue: {
+        datasetId: 'loading',
+        title: 'Loading Repository...',
+        description: 'Fetching telemetry payloads from assets...',
+        startTime: Date.now(),
+        endTime: Date.now() + 1000,
+        tracks: [],
+      },
+    },
+  );
 
   private readonly _currentTime = signal<number>(0);
   private readonly _isPlaying = signal<boolean>(false);
@@ -24,18 +26,21 @@ export class MigrationService {
   private readonly _selectedIndividualIds = signal<Set<string>>(new Set());
 
   // --- PUBLIC READONLY COMPUTED SIGNALS ---
-  public readonly dataset = this._dataset.asReadonly();
+  public readonly dataset = computed(() => this.datasetResource.value());
+  public readonly isLoading = this.datasetResource.isLoading;
+  public readonly error = this.datasetResource.error;
+
   public readonly currentTime = this._currentTime.asReadonly();
   public readonly isPlaying = this._isPlaying.asReadonly();
   public readonly playbackSpeed = this._playbackSpeed.asReadonly();
   public readonly selectedIndividualIds = this._selectedIndividualIds.asReadonly();
 
-  public readonly startTime = computed(() => this._dataset().startTime);
-  public readonly endTime = computed(() => this._dataset().endTime);
+  public readonly startTime = computed(() => this.dataset().startTime);
+  public readonly endTime = computed(() => this.dataset().endTime);
 
   // Active tracks filtered dynamically by user selections in the sidebar
   public readonly activeTracks = computed(() => {
-    const ds = this._dataset();
+    const ds = this.dataset();
     const selected = this._selectedIndividualIds();
     return ds.tracks.filter((track) => selected.has(track.individualId));
   });
@@ -61,7 +66,15 @@ export class MigrationService {
   private lastTimestamp: number = 0;
 
   constructor() {
-    this.loadDataset();
+    // Initialize dataset tracking and default selections once resources resolve
+    effect(() => {
+      const data = this.dataset();
+      if (data && data.datasetId !== 'loading') {
+        const allIds = new Set(data.tracks.map((t) => t.individualId));
+        this._selectedIndividualIds.set(allIds);
+        this._currentTime.set(data.startTime);
+      }
+    });
 
     // Effect triggers the rAF render/calculation loop natively in zoneless mode
     effect(() => {
@@ -70,21 +83,6 @@ export class MigrationService {
       } else {
         this.stopLoop();
       }
-    });
-  }
-
-  // --- DATA REPOSITORY LOADER ---
-  private loadDataset(): void {
-    this.http.get<MigrationDataset>('data/data.json').subscribe({
-      next: (data) => {
-        this._dataset.set(data);
-        const allIds = new Set(data.tracks.map((t) => t.individualId));
-        this._selectedIndividualIds.set(allIds);
-        this._currentTime.set(data.startTime);
-      },
-      error: (err) => {
-        console.error('Failed to load migration data repository from assets/data.json:', err);
-      },
     });
   }
 
