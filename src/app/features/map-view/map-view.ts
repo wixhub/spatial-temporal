@@ -5,26 +5,28 @@ import {
   effect,
   inject,
   ElementRef,
-  ViewChild,
+  viewChild,
+  ChangeDetectionStrategy,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
 import { MigrationService } from '../../core/services/migration.service';
 
 @Component({
   selector: 'app-map-view',
-  imports: [CommonModule],
   templateUrl: './map-view.html',
   styleUrl: './map-view.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapView implements AfterViewInit, OnDestroy {
-  private migrationService = inject(MigrationService);
+  private readonly migrationService = inject(MigrationService);
 
-  @ViewChild('mapContainer', { static: true }) mapContainer!: ElementRef;
+  // ViewChild signal query replacing old @ViewChild decorator syntax
+  protected readonly mapContainer = viewChild.required<ElementRef<HTMLElement>>('mapContainer');
+
   private map!: L.Map;
-  private trackLayers: Map<string, L.Polyline> = new Map();
-  private markerLayers: Map<string, L.CircleMarker> = new Map();
-  private trailLayers: Map<string, L.Polyline> = new Map();
+  private readonly trackLayers: Map<string, L.Polyline> = new Map();
+  private readonly markerLayers: Map<string, L.CircleMarker> = new Map();
+  private readonly trailLayers: Map<string, L.Polyline> = new Map();
 
   constructor() {
     // React to live temporal playback positions via signals (zoneless safe)
@@ -45,8 +47,8 @@ export class MapView implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    // Initialize Leaflet Map centered over Central Europe (matches Movebank sample payloads)
-    this.map = L.map(this.mapContainer.nativeElement, {
+    // Initialize Leaflet Map centered over Central Europe using modern viewChild signal value lookup
+    this.map = L.map(this.mapContainer().nativeElement, {
       zoomControl: false,
       attributionControl: false,
     }).setView([47.5, 9.5], 6);
@@ -111,7 +113,7 @@ export class MapView implements AfterViewInit, OnDestroy {
       const { track, currentPoint, trail } = pos;
       const latLng: [number, number] = [currentPoint.latitude, currentPoint.longitude];
 
-      // 1. Render recent historical trail polyline up to current playback head
+      // Render recent historical trail polyline up to current playback head
       const trailLatLngs = trail.map((p: any) => [p.latitude, p.longitude] as [number, number]);
       if (this.trailLayers.has(track.individualId)) {
         this.trailLayers.get(track.individualId)!.setLatLngs(trailLatLngs);
@@ -124,7 +126,7 @@ export class MapView implements AfterViewInit, OnDestroy {
         this.trailLayers.set(track.individualId, trailLine);
       }
 
-      // 2. Render or update active coordinate marker node with rich metadata popup
+      // Render or update active coordinate marker node with rich metadata popup
       const popupContent = `
         <div class="map-popup">
           <strong>${track.commonName}</strong><br/>
