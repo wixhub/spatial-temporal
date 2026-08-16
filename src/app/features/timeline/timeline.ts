@@ -1,31 +1,35 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MigrationService } from '../../core/services/migration.service';
 import { PlaybackSpeed } from '../../core/models/telemetry.model';
 
 @Component({
   selector: 'app-timeline',
-  imports: [CommonModule],
   templateUrl: './timeline.html',
   styleUrl: './timeline.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Timeline {
-  public migrationService = inject(MigrationService);
+  // Injecting the migration service for template-driven state consumption via signals
+  protected readonly migrationService = inject(MigrationService);
 
-  speeds: PlaybackSpeed[] = [1, 5, 10, 50, 100];
+  // Available playback speed configurations
+  protected readonly speeds: PlaybackSpeed[] = [1, 5, 10, 50, 100];
 
-  onSeekInput(event: Event): void {
+  // Handles timeline range input adjustments
+  protected onSeekInput(event: Event): void {
     const target = event.target as HTMLInputElement;
     const value = Number(target.value);
     this.migrationService.seek(value);
   }
 
-  formatDate(timestamp: number): string {
+  // Formats unix timestamps to readable UTC strings
+  protected formatDate(timestamp: number): string {
     if (!timestamp) return '';
     return new Date(timestamp).toUTCString().replace('GMT', 'UTC');
   }
 
-  calculateProgress(): number {
+  // Calculates percentage progress for timeline range visualization
+  protected calculateProgress(): number {
     const start = this.migrationService.startTime();
     const end = this.migrationService.endTime();
     const current = this.migrationService.currentTime();
