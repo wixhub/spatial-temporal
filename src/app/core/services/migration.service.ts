@@ -1,4 +1,4 @@
-import { Service, signal, computed, effect, inject } from '@angular/core';
+import { Service, signal, computed, effect } from '@angular/core';
 import { httpResource } from '@angular/common/http';
 import { MigrationDataset, PlaybackSpeed } from '../models/telemetry.model';
 
