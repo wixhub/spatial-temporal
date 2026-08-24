@@ -39,6 +39,30 @@
 
   @if (!isCollapsed()) {
     <div class="sidebar-body">
+      <!-- Dataset Search Form Input -->
+      <form class="dataset-search-box" (submit)="onIdSubmit($event)">
+        <label for="study-id-input">Study ID:</label>
+        <div class="input-group">
+          <input
+            id="study-id-input"
+            type="text"
+            [value]="inputId()"
+            (input)="updateInputId($any($event.target).value)"
+            placeholder="Enter ID (default: 7006760)"
+          />
+          <button type="submit" [disabled]="migrationService.isLoading()">
+            @if (migrationService.isLoading()) {
+              <span>Loading...</span>
+            } @else {
+              <span>Load</span>
+            }
+          </button>
+        </div>
+        @if (migrationService.error()) {
+          <span class="error-hint">ID not found. Fell back to 7006760.</span>
+        }
+      </form>
+
       <div class="section-desc">
         <p>{{ migrationService.dataset().description }}</p>
       </div>
@@ -93,5 +117,41 @@
         </div>
       </div>
     </div>
+
+    <!-- Footer with Data Attribution, MIT License and Author Links -->
+    <footer class="app-footer">
+      <div class="attribution-info">
+        <span>
+          Data: <a href="https://www.movebank.org" target="_blank" rel="noopener">Movebank</a> &
+          study contributors
+        </span>
+        <span>•</span>
+        <span>
+          Maps: <a href="https://carto.com" target="_blank" rel="noopener">CARTO</a>,
+          <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener"
+            >OpenStreetMap</a
+          >
+        </span>
+        <span>•</span>
+        <span>
+          License:
+          <a
+            href="https://github.com/wixhub/spatial-temporal/blob/main/LICENSE"
+            target="_blank"
+            rel="noopener"
+            >MIT</a
+          >
+        </span>
+      </div>
+      <div class="author-attribution">
+        Engineered by
+        <a href="https://github.com/wixhub" target="_blank" rel="noopener">wixhub</a> (<a
+          href="https://github.com/wixhub/spatial-temporal"
+          target="_blank"
+          rel="noopener"
+          >Repository Source</a
+        >)
+      </div>
+    </footer>
   }
 </aside>
