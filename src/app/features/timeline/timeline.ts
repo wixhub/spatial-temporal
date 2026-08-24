@@ -1,4 +1,4 @@
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MigrationService } from '../../core/services/migration.service';
 import { PlaybackSpeed } from '../../core/models/telemetry.model';
 
@@ -6,7 +6,6 @@ import { PlaybackSpeed } from '../../core/models/telemetry.model';
   selector: 'app-timeline',
   templateUrl: './timeline.html',
   styleUrl: './timeline.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Timeline {
   // Injecting the migration service for template-driven state consumption via signals

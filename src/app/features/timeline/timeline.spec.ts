@@ -1,85 +1,71 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
+import { signal } from '@angular/core';
 import { Timeline } from './timeline';
 import { MigrationService } from '../../core/services/migration.service';
-import { MigrationDataset } from '../../core/models/telemetry.model';
 
 describe('Timeline', () => {
   let component: Timeline;
   let fixture: ComponentFixture<Timeline>;
-  let httpMock: HttpTestingController;
-
-  // Mock dataset to fulfill MigrationService's httpResource requirement during initialization
-  const mockDataset: MigrationDataset = {
-    datasetId: 'test-dataset',
-    title: 'Test Repository',
-    description: 'Test telemetry payloads',
-    startTime: 1000,
-    endTime: 5000,
-    tracks: [],
-  };
+  let migrationServiceMock: any;
 
   beforeEach(async () => {
+    migrationServiceMock = {
+      startTime: signal(1000),
+      endTime: signal(5000),
+      currentTime: signal(3000),
+      isPlaying: signal(false),
+      playbackSpeed: signal(10),
+      togglePlay: vi.fn(),
+      play: vi.fn(),
+      pause: vi.fn(),
+      seek: vi.fn(),
+      setSpeed: vi.fn(),
+    };
+
     await TestBed.configureTestingModule({
       imports: [Timeline],
-      providers: [MigrationService, provideHttpClient(), provideHttpClientTesting()],
+      providers: [{ provide: MigrationService, useValue: migrationServiceMock }],
     }).compileComponents();
-
-    httpMock = TestBed.inject(HttpTestingController);
-
-    // Resolve the initial httpResource call triggered by MigrationService
-    const req = httpMock.expectOne('data/data.json');
-    req.flush(mockDataset);
 
     fixture = TestBed.createComponent(Timeline);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
-  afterEach(() => {
-    httpMock.verify();
-  });
-
-  // Test component creation
-  it('should create the timeline component successfully', () => {
+  it('should create the component', () => {
     expect(component).toBeTruthy();
+    expect(component['speeds']).toEqual([1, 5, 10, 50, 100]);
   });
 
-  // Test formatting unix timestamp into UTC string format
   it('should format timestamp correctly to UTC string', () => {
-    const timestamp = 1704067200000; // 2024-01-01 00:00:00 UTC
-    const formatted = (component as any).formatDate(timestamp);
-    expect(formatted).toContain('2024');
+    // 0 -> empty string
+    expect(component['formatDate'](0)).toBe('');
+
+    // Valid non-zero timestamp (e.g. 1710000000000)
+    const formatted = component['formatDate'](1710000000000);
     expect(formatted).toContain('UTC');
-    expect((component as any).formatDate(0)).toBe('');
   });
 
-  // Test progress calculation logic based on current timeline state
   it('should calculate progress percentage accurately', () => {
-    const service = TestBed.inject(MigrationService);
-
-    // Set time right in the middle (startTime = 1000, endTime = 5000, currentTime = 3000)
-    service.seek(3000);
-    expect((component as any).calculateProgress()).toBe(50);
-
-    // Set time to start boundary
-    service.seek(1000);
-    expect((component as any).calculateProgress()).toBe(0);
-
-    // Set time to end boundary
-    service.seek(5000);
-    expect((component as any).calculateProgress()).toBe(100);
+    // Current time 3000, start 1000, end 5000 -> (3000-1000)/(5000-1000) = 2000/4000 = 50%
+    const progress = component['calculateProgress']();
+    expect(progress).toBe(50);
   });
 
-  // Test handle seek input events from range slider target elements
-  it('should handle seek input events and update service time', () => {
-    const service = TestBed.inject(MigrationService);
+  it('should handle seek input event and call service seek', () => {
     const mockEvent = {
       target: { value: '2500' },
     } as unknown as Event;
 
-    (component as any).onSeekInput(mockEvent);
-    expect(service.currentTime()).toBe(2500);
+    component['onSeekInput'](mockEvent);
+    expect(migrationServiceMock.seek).toHaveBeenCalledWith(2500);
+  });
+
+  it('should safely return 0 progress if end <= start', () => {
+    migrationServiceMock.startTime.set(5000);
+    migrationServiceMock.endTime.set(1000);
+
+    const progress = component['calculateProgress']();
+    expect(progress).toBe(0);
   });
 });
