@@ -1,6 +1,8 @@
 # Spatial-Temporal Migration Playback
 
-## Movebank Data Repository / Animal Tracking
+![Spatial-Temporal-UI](image.png)
+
+## Movebank Data Repository & Animal Tracking
 
 A high-performance scientific web application built with Angular 22 (with Signals), TypeScript, Leaflet.js, and SCSS for interactive playback and visualization of animal migration telemetry over geographical map layers.
 
@@ -148,7 +150,6 @@ For more information on using the Angular CLI, including detailed command refere
 - **Software License**: This project is open-source software licensed under the **[MIT License](./LICENSE)**.
 
 - **Data & Map Attribution**:
-
   - Animal tracking data provided by **[Movebank](www.movebank.org)** and individual researchers.
 
   - Map tiles by **CARTO**, under CC BY 3.0. Data by **OpenStreetMap** contributors.
