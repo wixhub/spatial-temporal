@@ -6,16 +6,15 @@ import {
   inject,
   ElementRef,
   viewChild,
-  ChangeDetectionStrategy,
 } from '@angular/core';
 import * as L from 'leaflet';
 import { MigrationService } from '../../core/services/migration.service';
+import { AnimalTrack } from '../../core/models/telemetry.model';
 
 @Component({
   selector: 'app-map-view',
   templateUrl: './map-view.html',
   styleUrl: './map-view.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapView implements AfterViewInit, OnDestroy {
   private readonly migrationService = inject(MigrationService);
@@ -44,13 +43,21 @@ export class MapView implements AfterViewInit, OnDestroy {
         this.rebuildStaticTracks(activeTracks);
       }
     });
+
+    // Automatically fit map bounds when a new dataset is successfully loaded
+    effect(() => {
+      const dataset = this.migrationService.dataset();
+      if (this.map && dataset && dataset.tracks.length > 0 && dataset.datasetId !== 'loading') {
+        this.fitMapToTracks(dataset.tracks);
+      }
+    });
   }
 
   ngAfterViewInit(): void {
     // Initialize Leaflet Map centered over Central Europe using modern viewChild signal value lookup
     this.map = L.map(this.mapContainer().nativeElement, {
       zoomControl: false,
-      attributionControl: false,
+      attributionControl: true,
     }).setView([47.5, 9.5], 6);
 
     // Dark scientific CartoDB Dark Matter tile layer
@@ -70,10 +77,27 @@ export class MapView implements AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.map) {
       this.map.remove();
+      (this.map as any) = undefined;
     }
   }
 
-  private rebuildStaticTracks(tracks: any[]): void {
+  private fitMapToTracks(tracks: AnimalTrack[]): void {
+    const bounds = L.latLngBounds([]);
+    let hasPoints = false;
+
+    for (const track of tracks) {
+      for (const p of track.points) {
+        bounds.extend([p.latitude, p.longitude]);
+        hasPoints = true;
+      }
+    }
+
+    if (hasPoints) {
+      this.map.fitBounds(bounds, { padding: [50, 50], maxZoom: 12 });
+    }
+  }
+
+  private rebuildStaticTracks(tracks: AnimalTrack[]): void {
     // Purge outdated track vector overlays
     this.trackLayers.forEach((layer) => layer.remove());
     this.trackLayers.clear();
@@ -94,9 +118,9 @@ export class MapView implements AfterViewInit, OnDestroy {
       }
     });
 
-    // Render full background reference vector paths with low opacity dashed styling
+    // Render full background reference vector paths with low opacity styled lines
     for (const track of tracks) {
-      const latLngs = track.points.map((p: any) => [p.latitude, p.longitude] as [number, number]);
+      const latLngs = track.points.map((p) => [p.latitude, p.longitude] as [number, number]);
       const polyline = L.polyline(latLngs, {
         color: track.color,
         weight: 1.5,
@@ -126,14 +150,16 @@ export class MapView implements AfterViewInit, OnDestroy {
         this.trailLayers.set(track.individualId, trailLine);
       }
 
-      // Render or update active coordinate marker node with rich metadata popup
+      // Render or update active coordinate marker node with rich metadata popup matching model types
       const popupContent = `
         <div class="map-popup">
           <strong>${track.commonName}</strong><br/>
-          <small>ID: ${track.individualId}</small><hr/>
+          <small>Species: <em>${track.speciesName}</em></small><hr/>
+          <b>ID:</b> ${track.individualId}<br/>
           <b>Time:</b> ${new Date(currentPoint.timestamp).toUTCString()}<br/>
-          <b>Speed:</b> ${currentPoint.groundSpeed} m/s<br/>
-          <b>Altitude:</b> ${currentPoint.altitude} m
+          <b>Sensor:</b> ${currentPoint.sensorType}
+          ${currentPoint.groundSpeed !== undefined ? `<br/><b>Speed:</b> ${currentPoint.groundSpeed} m/s` : ''}
+          ${currentPoint.altitude !== undefined ? `<br/><b>Altitude:</b> ${currentPoint.altitude} m` : ''}
         </div>
       `;
 

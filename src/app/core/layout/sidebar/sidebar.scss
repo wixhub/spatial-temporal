@@ -63,6 +63,72 @@
     overflow-y: auto;
     flex: 1;
 
+    // --- Dataset Search Box ---
+    .dataset-search-box {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.15);
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.05));
+
+      label {
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--text-faint, #64748b);
+        letter-spacing: 0.08em;
+      }
+
+      .input-group {
+        display: flex;
+        gap: 6px;
+
+        input {
+          flex: 1;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+          border-radius: 6px;
+          padding: 6px 10px;
+          font-size: 12px;
+          color: #f3f4f6;
+          font-family: monospace;
+          outline: none;
+          transition: border-color 0.2s;
+
+          &:focus {
+            border-color: var(--accent-glow, #38bdf8);
+          }
+        }
+
+        button {
+          background: rgba(56, 189, 248, 0.15);
+          border: 1px solid rgba(56, 189, 248, 0.3);
+          color: var(--accent-glow, #38bdf8);
+          padding: 0 12px;
+          border-radius: 6px;
+          font-size: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+
+          &:hover:not(:disabled) {
+            background: rgba(56, 189, 248, 0.25);
+          }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+        }
+      }
+
+      .error-hint {
+        font-size: 10px;
+        color: #f87171;
+      }
+    }
+
     .section-desc p {
       font-size: 12px;
       color: var(--text-muted, #94a3b8);
@@ -167,6 +233,49 @@
         strong {
           color: #f3f4f6;
           font-family: monospace;
+        }
+      }
+    }
+  }
+
+  // --- App Footer (Attributions & Links) ---
+  .app-footer {
+    padding: 12px 20px;
+    border-top: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
+    font-size: 10px;
+    color: var(--text-faint, #64748b);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: rgba(0, 0, 0, 0.1);
+
+    .attribution-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+
+      a {
+        color: var(--text-muted, #94a3b8);
+        text-decoration: none;
+        transition: color 0.2s;
+
+        &:hover {
+          color: var(--accent-glow, #38bdf8);
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .author-attribution {
+      color: var(--text-muted, #94a3b8);
+
+      a {
+        color: var(--accent-glow, #38bdf8);
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
         }
       }
     }
