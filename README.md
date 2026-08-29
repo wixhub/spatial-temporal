@@ -57,15 +57,15 @@ src/
 
 ## 🛠️ Tech Stack
 
-- Framework: This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.3.
+- **Framework**: This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.3.
 
-- Language: TypeScript
+- **Language**: TypeScript
 
-- Mapping Library: Leaflet.js & @types/leaflet
+- **Mapping Library**: Leaflet.js & @types/leaflet
 
-- Styling: SCSS with modern CSS Grid/Flexbox layouts
+- **Styling**: SCSS with modern CSS Grid/Flexbox layouts
 
-- Build Tool: Angular CLI
+- **Build Tool**: Angular CLI
 
 ## ⚙️ Getting Started
 
@@ -88,6 +88,28 @@ Install dependencies:
 ```bash
 npm install
 ```
+
+## ⚙️ Configuration & Environment
+
+To run this application locally, you need to provide configuration keys for map tiles [CARTO](https://carto.com/basemaps/apikey/).
+
+1. Copy the example environment configuration file located in `src/environments/`:
+
+```bash
+cp src/environments/environment.example.ts src/environments/environment.ts
+```
+
+2. Open src/environments/environment.ts and insert your personal CARTO API key:
+
+```typescript
+export const environment = {
+  production: true,
+  cartoApiKey: 'YOUR_CARTO_API_KEY',
+};
+```
+
+> [!NOTE]
+> `environment.ts` is ignored by Git to keep API keys secure, while `environment.example.ts` serves as the public template.
 
 ## Development server
 
